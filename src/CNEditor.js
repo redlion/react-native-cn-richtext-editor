@@ -184,9 +184,14 @@ export default class CNEditor extends Component {
         else if(tool === 'pink_hl' || tool === 'green_hl'  || tool === 'blue_hl'  || tool === 'yellow_hl'   || tool === 'orange_hl'  || tool === 'purple_hl') {
             jsonString = JSON.stringify({ type: 'toolbar', command: 'highlight', value: styleList[tool].backgroundColor });
         }
+        else if(tool === 'link') {
+            jsonString = JSON.stringify({ type: 'toolbar', command: 'link', value: {videoID: 'youtubeID', time: '405'}});
+        }
         else {
             jsonString = JSON.stringify({ type: 'toolbar', command: tool  });
         }
+        console.log('applyToolbar called.');
+        console.log(jsonString);
 
         if (this.webViewRef) {            
             this.webViewRef.postMessage(jsonString);
@@ -194,6 +199,7 @@ export default class CNEditor extends Component {
     } 
 
     focus = () => {
+        console.log('CNEditor focused');
         const jsonString = JSON.stringify({ type: 'editor', command: 'focus'  }); 
 
         if (this.webViewRef) {            

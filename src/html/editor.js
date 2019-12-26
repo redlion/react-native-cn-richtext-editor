@@ -154,6 +154,17 @@ const editorHTML = `
                              doc.execCommand("insertHTML", false, img);
                            }
                         break;
+                        case 'link':
+                        var anchorlink = "<a href='http://digg.com'>" + value.videoID + " at " + value.time + "</a>";
+                          if(document.all) {
+                            var range = editor.selection.createRange();
+                            range.pasteHTML(anchorlink);
+                            range.collapse(false);
+                            range.select();
+                          } else {
+                            doc.execCommand("insertHTML", false, anchorlink);
+                          }
+                        break;
                     default:
                         break;
                 }
@@ -164,6 +175,7 @@ const editorHTML = `
             var getRequest = (event) => {
                  
               var msgData = JSON.parse(event.data);
+              console.log(msgData);
               if(msgData.type === 'toolbar') {
                 applyToolbar(msgData.command, msgData.value || '');
               }

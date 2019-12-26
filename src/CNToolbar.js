@@ -34,6 +34,7 @@ class CNToolbar extends Component {
             || this.props.ul
             || this.props.ol
             || this.props.image
+            || this.props.link
             || this.props.highlight
             || this.props.foreColor
             ) {
