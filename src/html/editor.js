@@ -35,7 +35,8 @@ const editorHTML = `
     <script>
         (function(doc) {
             var editor = document.getElementById('editor');
-            editor.contentEditable = true;
+            // editor.contentEditable = true;
+            editor.contentEditable = false;
 
             var getSelectedStyles = () => {
                 let styles = [];
@@ -196,6 +197,10 @@ const editorHTML = `
                   break;
                 case 'setHtml':
                   editor.innerHTML = msgData.value;
+                  break;
+                case 'changeEditState':
+                  editor.contentEditable = msgData.value;
+                  editor.focus();
                   break;
                 default: break;
               }

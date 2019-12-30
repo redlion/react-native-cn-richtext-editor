@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {WebView} from 'react-native-webview';
+import { WebView } from 'react-native-webview';
 import htmlEditor from './html/editor';
 import { StyleSheet, View, Image} from 'react-native';
 const shortid = require('shortid');
@@ -196,7 +196,16 @@ export default class CNEditor extends Component {
         if (this.webViewRef) {            
             this.webViewRef.postMessage(jsonString);
         } 
-    } 
+    }
+
+    changeEditState = (editState) => {
+        console.log('just in changeEditState');
+        let jsonString = JSON.stringify({ type: 'editor', command: 'changeEditState', value: editState});
+        if (this.webViewRef) {
+            console.log('in change edit state before postMessage');
+            this.webViewRef.postMessage(jsonString);
+        }
+    }
 
     focus = () => {
         console.log('CNEditor focused');
@@ -224,6 +233,7 @@ export default class CNEditor extends Component {
     
     
     blur = () => {
+        console.log("editor blur");
         const jsonString = JSON.stringify({ type: 'editor', command: 'blur'  }); 
 
         if (this.webViewRef) {            
@@ -258,10 +268,9 @@ export default class CNEditor extends Component {
             domStorageEnabled={true}
             allowUniversalAccessFromFileURLs={true}
             allowFileAccessFromFileURLs={true}
-            
+            hideKeyboardAccessoryView={true}
             javaScriptEnabled={true}
-            source={{ html: htmlEditor}} 
-            domStorageEnabled={true}
+            source={{ html: htmlEditor}}
             mixedContentMode='always'
             onMessage={this.onMessage}
 			renderError={(error)=>console.log('error:',error)}

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Keyboard
 , TouchableWithoutFeedback, Text
-, KeyboardAvoidingView } from 'react-native';
+, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 
 import  CNEditor , { CNToolbar, 
 // getInitialObject , CNRichTextEditor, // old editor
 getDefaultStyles } from "react-native-cn-richtext-editor";
+
+import ShowHideView from './src/components/ShowHideView';
 
 const defaultStyles = getDefaultStyles();
 
@@ -17,6 +19,8 @@ class App extends Component {
         this.state = {
             selectedTag : 'body',
             selectedStyles : [],
+            editable : false,
+            toolBarHide: true
         };
 
         this.editor = null;
@@ -38,6 +42,17 @@ class App extends Component {
         })
     }
 
+    editButtonPress = () => {
+      if (this.editor) {
+        this.editor.changeEditState(!this.state.editable);
+        this.setState({
+          editable: !this.state.editable,
+          toolBarHide: !this.state.toolBarHide
+        });
+      }
+      console.log("Edit Button pressed" + this.state.editable);
+    }
+
     render() {
         return (
             <KeyboardAvoidingView 
@@ -55,12 +70,18 @@ class App extends Component {
                 <View
                 style={{flex: 1}} 
                 onTouchStart={() => {
-                   this.editor && this.editor.blur();
+                  //console.log('onTouchStart on outer view'); 
+                  this.editor && this.editor.blur();
                 }}
                 >              
-                   <View style={styles.main}
-                    onTouchStart={(e) => e.stopPropagation()}>
-                    
+                  <View style={styles.main}
+                    onTouchStart={(e) => {
+                      e.stopPropagation()
+                    }}
+                  >
+                      <TouchableOpacity onPress={this.editButtonPress} style={[styles.button]}>
+                        <Text style={[styles.text]}>{this.state.editable ? 'Done' : 'Edit'}</Text>
+                      </TouchableOpacity>
                         <CNEditor                   
                           ref={input => this.editor = input}
                           onSelectedTagChanged={this.onSelectedTagChanged}
@@ -69,19 +90,19 @@ class App extends Component {
                           styleList={defaultStyles}
                           initialHtml={`   
                           <h1>HTML Ipsum Presents</h1>
-                            <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
+                            <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="http://digg.com">Digg</a> in turpis pulvinar facilisis. Ut felis.</p>
                             `}                         
-                        />                          
-                    </View>
+                        />                   
+                  </View>
                 </View>
 
-                <View style={{
-                    minHeight: 35
+                <ShowHideView hide={this.state.toolBarHide} style={{
+                    minHeight: 55
                 }}>
 
                     <CNToolbar
                                 style={{
-                                    height: 35,
+                                    height: 55,
                                 }}
                                 iconSetContainerStyle={{
                                     flexGrow: 1,
@@ -168,7 +189,7 @@ class App extends Component {
                                 selectedStyles={this.state.selectedStyles}
                                 onStyleKeyPress={this.onStyleKeyPress}
                             />
-                </View>
+                  </ShowHideView>
         </KeyboardAvoidingView>
         );
     }
@@ -201,6 +222,25 @@ var styles = StyleSheet.create({
     },
     lineThroughButton: {
         textDecorationLine: 'line-through'
+    },
+    button: {
+      display: 'flex',
+      height: 50,
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+
+      backgroundColor: '#2AC062',
+      shadowColor: '#2AC062',
+      shadowOpacity: 0.4,
+      shadowOffset: { height: 10, width: 0 },
+      shadowRadius: 20,
+    },
+
+    text: {
+        fontSize: 16,
+        textTransform: 'uppercase',
+        color: '#FFFFFF',
     },
 });
 
