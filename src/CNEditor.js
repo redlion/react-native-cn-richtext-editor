@@ -93,7 +93,7 @@ export default class CNEditor extends Component {
                         this.onSelectedTagChanged(message.data);
                     break;
                     
-		    case 'onChange':                        
+            case 'onChange':       
                         this.onValueChanged(message.data);
                     break;
 			    
@@ -273,6 +273,7 @@ export default class CNEditor extends Component {
             source={{ html: htmlEditor}}
             mixedContentMode='always'
             onMessage={this.onMessage}
+            //injectedJavaScript="window.onscroll=function(){alert('Not WORK');};true;"
 			renderError={(error)=>console.log('error:',error)}
             />
         </View>

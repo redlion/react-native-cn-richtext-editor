@@ -7,19 +7,22 @@ const editorHTML = `
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <style>
         html {
-            height: 100%;
             width: 100%;
         }
         body {
-            display: flex;
-            flex-grow: 1;
-            flex-direction: column;
-            height: 100%;
+            overflow: scroll;
             margin: 0;
             padding: 2px;
         }
         #editor {
-           flex-grow: 1;
+            height: calc(100vh - 5px);
+            overflow-y: scroll;
+        }
+        #debugDiv {
+          position: sticky;
+          bottom: 0;
+          padding: 1px 0;
+          background: #eee;
         }
 
         #editor:focus {
@@ -32,11 +35,27 @@ const editorHTML = `
     <div id="editor">
        
     </div>
+    <div id="debugDiv">
+
+    </div>
     <script>
         (function(doc) {
             var editor = document.getElementById('editor');
+            var debugDiv = document.getElementById('debugDiv');
             // editor.contentEditable = true;
             editor.contentEditable = false;
+
+            var scrollToBottomObserver = () => {
+              debugDiv.append('<p>scrollToBottomObserver triggered</p>');
+              editor.scrollTop = editor.offsetTop;
+            }
+
+            // Create an observer and pass it a callback.
+            //var observer = new MutationObserver(scrollToBottomObserver);
+
+            // Tell it to look for new children that will change the height.
+            var config = {childList: true};
+            //observer.observe(editor, config);
 
             var getSelectedStyles = () => {
                 let styles = [];
@@ -97,8 +116,26 @@ const editorHTML = `
                 let contentChanged = JSON.stringify({
                     type: 'onChange',
                     data: document.getElementById("editor").innerHTML });
+                // scrollToBottom()
                 sendMessage(contentChanged);
             }, false);
+
+            var scrollToBottom = () => {
+              //var div = document.getElementById('editor');
+              // debugDiv.append('<p>Before scrollTop is called.</p>');
+              // debugDiv.append('<p>ScrollTop is ' + document.documentElement.scrollTop + ' </p>');
+              // document.documentElement.scrollTop = 4000;
+              document.getElementById('debugDiv').scrollIntoView({
+                behavior: 'smooth'
+              });
+              // debugDiv.append('<p>ScrollTop after is ' + document.documentElement.scrollTop + ' </p>');
+              // editor.scrollTop = editor.scrollHeight - editor.clientHeight;
+            };
+
+            var onScroll = (e) => {
+              debugDiv.append('<p>scrolling....</p>');
+              debugDiv.append(e);
+            }
 
             var applyToolbar = (toolType, value = '') => {
                 switch (toolType) {
@@ -200,6 +237,7 @@ const editorHTML = `
                   break;
                 case 'changeEditState':
                   editor.contentEditable = msgData.value;
+                  editor.blur();
                   editor.focus();
                   break;
                 default: break;
@@ -211,6 +249,9 @@ const editorHTML = `
 
             document.addEventListener("message", getRequest , false);
             window.addEventListener("message", getRequest , false);
+            // window.addEventListener("scroll", onScroll, false);
+
+            // debugDiv.append('<p>Debug started after scrollTo.</p>');
             
         })(document)
     </script>
